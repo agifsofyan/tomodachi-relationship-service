@@ -1,0 +1,25 @@
+app:
+  name: relationship-service
+  version: 1.0.0
+  env: development
+
+server:
+  host: 0.0.0.0
+  port: 8080
+  readTimeout: 10
+  writeTimeout: 10
+
+database:
+  host: 
+  port: 
+  user: 
+  password: 
+  name: 
+  sslMode: disable
+  timezone: Asia/Jakarta
+  maxOpenConns: 25
+  maxIdleConns: 10
+  connMaxLifetime: 300
+
+logger:
+  level: debug

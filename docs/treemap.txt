@@ -1,0 +1,23 @@
+relationship-service/
+├── cmd/
+│   └── server/
+├── internal/
+│   ├── relationship/
+│   │   ├── application/
+│   │   ├── delivery/
+│   │   ├── domain/
+│   │   └── infrastructure/
+│   └── shared/
+│       ├── config/
+│       ├── database/
+│       ├── kafka/
+│       ├── logger/
+│       ├── middleware/
+│       └── redis/
+├── api/
+├── migrations/
+├── scripts/
+├── docs/
+├── Dockerfile
+├── go.mod
+└── Makefile

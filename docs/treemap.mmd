@@ -1,0 +1,34 @@
+graph TD
+    root[relationship-service/]
+    
+    %% Level 1
+    root --> cmd[cmd/]
+    root --> internal[internal/]
+    root --> api[api/]
+    root --> migrations[migrations/]
+    root --> scripts[scripts/]
+    root --> docs[docs/]
+    root --> dockerfile[Dockerfile]
+    root --> gomod[go.mod]
+    root --> makefile[Makefile]
+
+    %% Level 2 (cmd)
+    cmd --> server[server/]
+
+    %% Level 2 (internal)
+    internal --> relationship[relationship/]
+    internal --> shared[shared/]
+
+    %% Level 3 (relationship)
+    relationship --> app[application/]
+    relationship --> del[delivery/]
+    relationship --> dom[domain/]
+    relationship --> inf[infrastructure/]
+
+    %% Level 3 (shared)
+    shared --> conf[config/]
+    shared --> db[database/]
+    shared --> kaf[kafka/]
+    shared --> log[logger/]
+    shared --> mid[middleware/]
+    shared --> red[redis/]

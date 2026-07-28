@@ -1,0 +1,3 @@
+tmp
+cmd/server/logs/*
+configs/app.yml
