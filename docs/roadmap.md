@@ -7,5 +7,5 @@
 | Health Check | ✅      |
 | Database     | ✅      |
 | Middleware   | ✅      |
-| Response     | ⏳      |
-| Validator    | ⏳      |
+| Response     | ✅      |
+| Validator    | ✅      |

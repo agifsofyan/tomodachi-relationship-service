@@ -1,0 +1,1 @@
+DROP INDEX idx_friendships_user_friend;
