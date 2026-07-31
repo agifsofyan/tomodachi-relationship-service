@@ -9,8 +9,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(cfg *config.Config, log *slog.Logger) *gin.Engine {
-	// Gin mode
+func NewRouter(
+	cfg *config.Config,
+	log *slog.Logger,
+	handler *Handlers,
+	m *Middlewares,
+) *gin.Engine {
+
 	switch cfg.App.Env {
 	case "production":
 		gin.SetMode(gin.ReleaseMode)
@@ -22,7 +27,6 @@ func NewRouter(cfg *config.Config, log *slog.Logger) *gin.Engine {
 
 	r := gin.New()
 
-	// Middleware
 	r.Use(
 		middleware.RequestID(),
 		middleware.Logger(log),
@@ -30,11 +34,10 @@ func NewRouter(cfg *config.Config, log *slog.Logger) *gin.Engine {
 		middleware.CORS(),
 	)
 
-	// Trust proxy
 	_ = r.SetTrustedProxies(nil)
 
-	// Routes
 	registerHealth(r, cfg)
+	registerRelationshipRoutes(r, handler, m)
 
 	return r
 }
@@ -47,4 +50,21 @@ func registerHealth(r *gin.Engine, cfg *config.Config) {
 			"version": cfg.App.Version,
 		})
 	})
+}
+
+func registerRelationshipRoutes(
+	r *gin.Engine,
+	handler *Handlers,
+	m *Middlewares,
+) {
+
+	api := r.Group("/api/v1")
+
+	relationship := api.Group("/relationships")
+
+	relationship.POST(
+		"/friends/request",
+		m.Auth.Handler(),
+		handler.SendFriend.Handle,
+	)
 }

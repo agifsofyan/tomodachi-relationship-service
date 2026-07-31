@@ -4,15 +4,15 @@ import (
 	"net/http"
 
 	sendfriendrequest "github.com/agifsofyan/tomodachi-relationship-service/internal/relationship/application/send_friend_request"
+	"github.com/agifsofyan/tomodachi-relationship-service/internal/shared/auth"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type SendFriendHandler struct {
 	sendFriendService *sendfriendrequest.SendFriendService
 }
 
-func NewFriendRequestHandler(
+func NewSendFriendHandler(
 	sendFriendService *sendfriendrequest.SendFriendService,
 ) *SendFriendHandler {
 
@@ -28,26 +28,31 @@ func (h *SendFriendHandler) Handle(
 	var request SendFriendRequestHttp
 
 	if err := c.ShouldBindJSON(&request); err != nil {
-		// validator response
+		// TODO: validator response
 		return
 	}
 
-	userID := uuid.New()
+	userID, err := auth.UserID(c.Request.Context())
+	if err != nil {
+		// TODO: unauthorized response
+		return
+	}
 
-	response, err := h.sendFriendService.Execute(
+	result, err := h.sendFriendService.Execute(
 		c.Request.Context(),
 		ToSendFriendApplicationRequest(
 			userID,
 			request,
 		),
 	)
+
 	if err != nil {
-		// error mapper
+		// TODO: error response
 		return
 	}
 
 	c.JSON(
 		http.StatusCreated,
-		ToSendFriendResponse(response),
+		ToSendFriendResponse(result),
 	)
 }

@@ -4,6 +4,7 @@ type Config struct {
 	App      AppConfig      `mapstructure:"app"`
 	Server   ServerConfig   `mapstructure:"server"`
 	Database DatabaseConfig `mapstructure:"database"`
+	JWT      JwtConfig      `mapstructure:"jwt"`
 	Logger   LoggerConfig   `mapstructure:"logger"`
 }
 
@@ -32,6 +33,12 @@ type DatabaseConfig struct {
 	MaxOpenConns    int `yaml:"maxOpenConns"`
 	MaxIdleConns    int `yaml:"maxIdleConns"`
 	ConnMaxLifetime int `yaml:"connMaxLifetime"`
+}
+
+type JwtConfig struct {
+	SecretKey            string `mapstructure:"secret_key"`
+	Algorithm            string `mapstructure:"algorithm"`
+	AccessTokenExpiryDay int    `mapstructure:"access_token_expiry_day"`
 }
 
 type LoggerConfig struct {
