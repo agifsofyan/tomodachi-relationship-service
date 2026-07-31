@@ -23,7 +23,6 @@ func NewParser(
 	secret string,
 	algorithm string,
 ) TokenParser {
-
 	return &JWTParser{
 		secret:    []byte(secret),
 		algorithm: algorithm,

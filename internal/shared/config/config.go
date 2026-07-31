@@ -36,9 +36,9 @@ type DatabaseConfig struct {
 }
 
 type JwtConfig struct {
-	SecretKey            string `mapstructure:"secret_key"`
-	Algorithm            string `mapstructure:"algorithm"`
-	AccessTokenExpiryDay int    `mapstructure:"access_token_expiry_day"`
+	SecretKey            string `yaml:"secret_key"`
+	Algorithm            string `yaml:"algorithm"`
+	AccessTokenExpiryDay int    `yaml:"access_token_expiry_day"`
 }
 
 type LoggerConfig struct {

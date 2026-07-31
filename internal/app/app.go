@@ -2,12 +2,10 @@ package app
 
 import (
 	"log"
-	"log/slog"
 
 	"github.com/agifsofyan/tomodachi-relationship-service/internal/shared/config"
 	"github.com/agifsofyan/tomodachi-relationship-service/internal/shared/database"
 	"github.com/agifsofyan/tomodachi-relationship-service/internal/shared/logger"
-	"github.com/gin-gonic/gin"
 )
 
 func Run() {
@@ -62,38 +60,38 @@ func Run() {
 	}
 }
 
-func NewApp(
-	cfg *config.Config,
-	log *slog.Logger,
-	db *database.Client,
-) *gin.Engine {
+// func NewApp(
+// 	cfg *config.Config,
+// 	log *slog.Logger,
+// 	db *database.Client,
+// ) *gin.Engine {
 
-	deps := NewDependencies(
-		cfg,
-		db,
-	)
+// 	deps := NewDependencies(
+// 		cfg,
+// 		db,
+// 	)
 
-	repositories := NewRepositories(
-		deps,
-	)
+// 	repositories := NewRepositories(
+// 		deps,
+// 	)
 
-	services := NewServices(
-		deps,
-		repositories,
-	)
+// 	services := NewServices(
+// 		deps,
+// 		repositories,
+// 	)
 
-	handlers := NewHandlers(
-		services,
-	)
+// 	handlers := NewHandlers(
+// 		services,
+// 	)
 
-	middlewares := NewMiddlewares(
-		cfg,
-	)
+// 	middlewares := NewMiddlewares(
+// 		cfg,
+// 	)
 
-	return NewRouter(
-		cfg,
-		log,
-		handlers,
-		middlewares,
-	)
-}
+// 	return NewRouter(
+// 		cfg,
+// 		log,
+// 		handlers,
+// 		middlewares,
+// 	)
+// }
