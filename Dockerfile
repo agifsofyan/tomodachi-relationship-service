@@ -1,27 +1,34 @@
-# --- Contoh Dockerfile untuk service Golang (relationship-service) ---
-# Letakkan file ini di root folder relationship-service/ (sejajar dengan go.mod)
-# Multi-stage build: hasil akhir image kecil, tanpa toolchain Go.
-
-# Stage 1: build binary
+# ---------- Builder ----------
 FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 
 COPY go.mod go.sum ./
-RUN go mod download
+
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go mod download
 
 COPY . .
 
-# Sesuaikan path "./cmd/server" dengan lokasi package main kamu
-RUN CGO_ENABLED=0 GOOS=linux go build -o /app/bin/relationship-service ./cmd/server
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -o /app/bin/relationship-service ./cmd/server
 
-# Stage 2: runtime image minimal
+# ---------- Runtime ----------
 FROM alpine:3.20
 
-RUN apk add --no-cache ca-certificates
+RUN apk add --no-cache ca-certificates && \
+    addgroup -S appgroup && \
+    adduser -S appuser -G appgroup
 
 WORKDIR /app
+
 COPY --from=builder /app/bin/relationship-service .
+
+RUN chown -R appuser:appgroup /app
+
+USER appuser
 
 EXPOSE 8080
 
