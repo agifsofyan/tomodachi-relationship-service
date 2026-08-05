@@ -24,16 +24,15 @@ func Load() (*Config, error) {
 }
 
 func loadConfig() (*Config, error) {
-
-	file, err := os.ReadFile("configs/app.yml")
-	if err != nil {
-		return nil, fmt.Errorf("read config: %w", err)
-	}
-
 	var c Config
 
-	if err := yaml.Unmarshal(file, &c); err != nil {
-		return nil, fmt.Errorf("parse config: %w", err)
+	file, err := os.ReadFile("configs/app.yml")
+	if err == nil {
+		if err := yaml.Unmarshal(file, &c); err != nil {
+			return nil, fmt.Errorf("parse config: %w", err)
+		}
+	} else if !os.IsNotExist(err) {
+		return nil, fmt.Errorf("read config: %w", err)
 	}
 
 	overrideEnv(&c)

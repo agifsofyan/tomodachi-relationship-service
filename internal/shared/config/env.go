@@ -1,45 +1,12 @@
 package config
 
-import (
-	"os"
-	"strconv"
-)
-
 func overrideEnv(cfg *Config) {
-
-	if v := os.Getenv("APP_ENV"); v != "" {
-		cfg.App.Env = v
-	}
-
-	if v := os.Getenv("SERVER_PORT"); v != "" {
-		if port, err := strconv.Atoi(v); err == nil {
-			cfg.Server.Port = port
-		}
-	}
-
-	if v := os.Getenv("DB_HOST"); v != "" {
-		cfg.Database.Host = v
-	}
-
-	if v := os.Getenv("DB_PORT"); v != "" {
-		if port, err := strconv.Atoi(v); err == nil {
-			cfg.Database.Port = port
-		}
-	}
-
-	if v := os.Getenv("DB_USER"); v != "" {
-		cfg.Database.User = v
-	}
-
-	if v := os.Getenv("DB_PASSWORD"); v != "" {
-		cfg.Database.Password = v
-	}
-
-	if v := os.Getenv("DB_NAME"); v != "" {
-		cfg.Database.Name = v
-	}
-
-	if v := os.Getenv("LOGGER_LEVEL"); v != "" {
-		cfg.Logger.Level = v
-	}
+	cfg.App.Env = getenv("APP_ENV", cfg.App.Env)
+	cfg.Server.Port = getenvInt("SERVER_PORT", cfg.Server.Port)
+	cfg.Database.Host = getenv("DB_HOST", cfg.Database.Host)
+	cfg.Database.Port = getenvInt("DB_PORT", cfg.Database.Port)
+	cfg.Database.User = getenv("DB_USER", cfg.Database.User)
+	cfg.Database.Password = getenv("DB_PASSWORD", cfg.Database.Password)
+	cfg.Database.Name = getenv("DB_NAME", cfg.Database.Name)
+	cfg.Logger.Level = getenv("LOGGER_LEVEL", cfg.Logger.Level)
 }
