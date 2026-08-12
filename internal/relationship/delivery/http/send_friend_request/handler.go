@@ -21,6 +21,18 @@ func NewSendFriendHandler(
 	}
 }
 
+// Handle godoc
+// @Summary      Send friend request
+// @Description  Send a friend request to another user
+// @Tags         relationships
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        request body SendFriendRequestHttp true "Friend request payload"
+// @Success      201 {object} map[string]interface{}
+// @Failure      400 {object} map[string]string
+// @Failure      401 {object} map[string]string
+// @Router       /api/v1/relationships/friends/request [post]
 func (h *SendFriendHandler) Handle(
 	c *gin.Context,
 ) {

@@ -6,8 +6,14 @@ import (
 	"github.com/agifsofyan/tomodachi-relationship-service/internal/shared/config"
 	"github.com/agifsofyan/tomodachi-relationship-service/internal/shared/database"
 	"github.com/agifsofyan/tomodachi-relationship-service/internal/shared/logger"
+
+	_ "github.com/agifsofyan/tomodachi-relationship-service/docs" // generated docs, wajib di-import
 )
 
+// @title           Relationship Service API
+// @version         1.0
+// @description     API documentation for Relationship Service
+// @BasePath        /
 func Run() {
 
 	cfg, err := config.Load()
@@ -59,39 +65,3 @@ func Run() {
 		log.Error(err.Error())
 	}
 }
-
-// func NewApp(
-// 	cfg *config.Config,
-// 	log *slog.Logger,
-// 	db *database.Client,
-// ) *gin.Engine {
-
-// 	deps := NewDependencies(
-// 		cfg,
-// 		db,
-// 	)
-
-// 	repositories := NewRepositories(
-// 		deps,
-// 	)
-
-// 	services := NewServices(
-// 		deps,
-// 		repositories,
-// 	)
-
-// 	handlers := NewHandlers(
-// 		services,
-// 	)
-
-// 	middlewares := NewMiddlewares(
-// 		cfg,
-// 	)
-
-// 	return NewRouter(
-// 		cfg,
-// 		log,
-// 		handlers,
-// 		middlewares,
-// 	)
-// }

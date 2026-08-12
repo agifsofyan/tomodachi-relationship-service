@@ -7,6 +7,8 @@ import (
 	"github.com/agifsofyan/tomodachi-relationship-service/internal/shared/config"
 	"github.com/agifsofyan/tomodachi-relationship-service/internal/shared/middleware"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func NewRouter(
@@ -35,6 +37,18 @@ func NewRouter(
 	)
 
 	_ = r.SetTrustedProxies(nil)
+
+	r.GET("/docs/relationship-service", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/docs/relationship-service/index.html")
+	})
+
+	r.GET("/docs/relationship-service/*any", func(c *gin.Context) {
+		if c.Param("any") == "/" {
+			c.Redirect(http.StatusMovedPermanently, "/docs/relationship-service/index.html")
+			return
+		}
+		ginSwagger.WrapHandler(swaggerFiles.Handler)(c)
+	})
 
 	registerHealth(r, cfg)
 

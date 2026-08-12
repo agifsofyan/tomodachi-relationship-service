@@ -1,0 +1,53 @@
+basePath: /
+definitions:
+  internal_relationship_delivery_http_send_friend_request.SendFriendRequestHttp:
+    properties:
+      receiver_id:
+        type: string
+    required:
+    - receiver_id
+    type: object
+info:
+  contact: {}
+  description: API documentation for Relationship Service
+  title: Relationship Service API
+  version: "1.0"
+paths:
+  /api/v1/relationships/friends/request:
+    post:
+      consumes:
+      - application/json
+      description: Send a friend request to another user
+      parameters:
+      - description: Friend request payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_relationship_delivery_http_send_friend_request.SendFriendRequestHttp'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Send friend request
+      tags:
+      - relationships
+swagger: "2.0"
