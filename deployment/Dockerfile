@@ -1,10 +1,6 @@
 # ---------- Builder ----------
 FROM golang:1.26-alpine AS builder
 
-RUN apk add --no-cache \
-    ca-certificates \
-    tzdata
-
 WORKDIR /app
 
 COPY go.mod go.sum ./
@@ -22,7 +18,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 # ---------- Runtime ----------
 FROM alpine:3.20
 
-RUN apk add --no-cache ca-certificates && \
+RUN apk add --no-cache ca-certificates tzdata && \
     addgroup -S appgroup && \
     adduser -S appuser -G appgroup
 
