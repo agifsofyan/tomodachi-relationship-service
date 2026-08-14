@@ -1,3 +1,4 @@
 tmp
 cmd/server/logs/*
 configs/app.yml
+docs/kubectl
