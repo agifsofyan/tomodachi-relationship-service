@@ -1,0 +1,144 @@
+
+name: CI/CD Relationship Service
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: relationship-service-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test Relationship Service
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run Unit Tests
+        run: go test -v ./...
+
+      - name: Run Go Vet
+        run: go vet ./...
+
+      - name: Build Server
+        run: go build -o /tmp/relationship-server ./cmd/server
+
+      - name: Build Migration
+        run: go build -o /tmp/relationship-migrate ./cmd/migrate
+
+  build-and-push:
+    name: Build and Push Image to GHCR
+    runs-on: ubuntu-latest
+    needs: test
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v4.4.1
+
+      - name: Login to GHCR
+        uses: docker/login-action@v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v7.4.0
+        with:
+          context: .
+          file: ./deployment/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/agifsofyan/relationship-service:latest
+            ghcr.io/agifsofyan/relationship-service:sha-${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.description=Tomodachi Relationship Service
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: Update Infrastructure Manifest
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout infrastructure repository
+        uses: actions/checkout@v6
+        with:
+          repository: agifsofyan/tomodachi-infra
+          ref: main
+          token: ${{ secrets.INFRA_REPO_TOKEN }}
+          path: infra
+
+      - name: Update Relationship Service image
+        working-directory: infra
+        env:
+          IMAGE_TAG: sha-${{ github.sha }}
+        run: |
+          MANIFEST="kubernetes/application/relationship-service/deployment.yaml"
+
+          sed -i -E \
+            "s|(image:[[:space:]]*ghcr.io/agifsofyan/relationship-service:).*|\1${IMAGE_TAG}|" \
+            "$MANIFEST"
+
+          echo "Updated image:"
+          grep 'image:' "$MANIFEST"
+
+      - name: Commit and push manifest
+        working-directory: infra
+        env:
+          IMAGE_TAG: sha-${{ github.sha }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add kubernetes/application/relationship-service/deployment.yaml
+
+          if git diff --cached --quiet; then
+            echo "No changes detected."
+            exit 0
+          fi
+
+          git commit -m "deploy(relationship-service): ${IMAGE_TAG}"
+          git push origin main
