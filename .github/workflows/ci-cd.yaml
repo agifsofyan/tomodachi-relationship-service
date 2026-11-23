@@ -116,20 +116,25 @@ jobs:
         env:
           IMAGE_TAG: sha-${{ github.sha }}
         run: |
-          MANIFEST="kubernetes/application/relationship-service/deployment.yaml"
+          MANIFEST="kubernetes/application/relationship-service/kustomization.yaml"
 
           sed -i -E \
-            "s|(image:[[:space:]]*ghcr.io/agifsofyan/relationship-service:).*|\1${IMAGE_TAG}|" \
+            "s|(^[[:space:]]*newTag:[[:space:]]*).*$|\1${IMAGE_TAG}|" \
             "$MANIFEST"
 
-          echo "Updated image:"
-          grep 'image:' "$MANIFEST"
+          echo "Updated image tag:"
+          grep -A 2 'name: ghcr.io/agifsofyan/relationship-service' "$MANIFEST"
 
       - name: Commit and push manifest
         working-directory: infra
         env:
           IMAGE_TAG: sha-${{ github.sha }}
+          SOURCE_COMMIT_SHA: ${{ github.sha }}
+          SOURCE_COMMIT_SUBJECT: ${{ github.event.head_commit.message || 'manual workflow dispatch' }}
         run: |
+          SOURCE_COMMIT_SHORT="${SOURCE_COMMIT_SHA:0:7}"
+          SOURCE_COMMIT_SUBJECT="${SOURCE_COMMIT_SUBJECT%%$'\n'*}"
+          
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
