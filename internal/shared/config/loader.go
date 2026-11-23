@@ -9,18 +9,17 @@ import (
 )
 
 var (
-	cfg  *Config
-	once sync.Once
+	cfg     *Config
+	loadErr error
+	once    sync.Once
 )
 
 func Load() (*Config, error) {
-	var err error
-
 	once.Do(func() {
-		cfg, err = loadConfig()
+		cfg, loadErr = loadConfig()
 	})
 
-	return cfg, err
+	return cfg, loadErr
 }
 
 func loadConfig() (*Config, error) {

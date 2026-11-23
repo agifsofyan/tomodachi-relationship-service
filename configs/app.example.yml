@@ -10,11 +10,11 @@ server:
   writeTimeout: 10
 
 database:
-  host: 
-  port: 
-  user: 
-  password: 
-  name: 
+  host:
+  port:
+  user:
+  password:
+  name:
   sslMode: disable
   timezone: Asia/Jakarta
   maxOpenConns: 25
