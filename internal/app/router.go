@@ -52,7 +52,6 @@ func NewRouter(
 
 	registerHealth(r, cfg)
 
-	// r.Group("/api/v1")
 	registerRelationshipRoutes(r, handler, m)
 
 	return r
