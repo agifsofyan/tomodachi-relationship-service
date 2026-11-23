@@ -6,6 +6,7 @@ import (
 	domainError "github.com/agifsofyan/tomodachi-relationship-service/internal/relationship/domain/errors"
 )
 
+// validate godoc
 func (s *SendFriendService) validate(
 	ctx context.Context,
 	request SendFriendRequest,
